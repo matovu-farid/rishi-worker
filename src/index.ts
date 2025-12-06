@@ -25,14 +25,15 @@ app.get("/health", (c) => {
 // app.use('/api/openai', createProxyMiddleware(openaiProxyOptions))
 
 app.post("/api/audio/speech", async (c) => {
-  const openai = new OpenAI({
-    apiKey: c.env.OPENAI_API_KEY,
-  });
+
 
   // Validate and fix the request body
-  const { model, input, voice, ...otherParams } = await c.req.json();
+  const { model, input, voice, apiKey, ...otherParams } = await c.req.json();
+  const openai = new OpenAI({
+    apiKey:  apiKey || c.env.OPENAI_API_KEY,
+  });
   const response = await openai.audio.speech.create({
-    model,
+    model: "tts-1",
     input,
     voice,
     ...otherParams,
@@ -41,16 +42,17 @@ app.post("/api/audio/speech", async (c) => {
 });
 
 app.post("/api/text/completions", async (c) => {
-  const { input, ...otherParams } = await c.req.json();
+  const { input, apiKey, ...otherParams } = await c.req.json();
   const openai = new OpenAI({
-    apiKey: c.env.OPENAI_API_KEY,
+    apiKey: apiKey || c.env.OPENAI_API_KEY,
   });
   const response = await openai.responses.create({
     model: "gpt-5-nano",
     input,
     ...otherParams,
   });
-  return response.output_text;
+
+  return c.json(response.output_text);
 });
 
 export default app;

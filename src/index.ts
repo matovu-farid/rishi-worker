@@ -41,12 +41,14 @@ app.post("/api/audio/speech", async (c) => {
 });
 
 app.post("/api/text/completions", async (c) => {
+  const { input, ...otherParams } = await c.req.json();
   const openai = new OpenAI({
     apiKey: c.env.OPENAI_API_KEY,
   });
   const response = await openai.responses.create({
     model: "gpt-5-nano",
-    input: "Write a one-sentence bedtime story about a unicorn.",
+    input,
+    ...otherParams,
   });
   return response.output_text;
 });

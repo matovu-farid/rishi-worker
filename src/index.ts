@@ -40,7 +40,6 @@ app.post("/api/audio/speech", async (c) => {
   return response;
 });
 
-// text generation
 app.post("/api/text/completions", async (c) => {
   const openai = new OpenAI({
     apiKey: c.env.OPENAI_API_KEY,

@@ -1,17 +1,16 @@
-import { Hono } from 'hono'
+import { Hono } from "hono";
 
 import { OpenAI } from "openai";
 
-const app = new Hono<{ Bindings: CloudflareBindings, }>();
-app.get('/', (c) => {
-  return c.text('Hello Hono!')
-})
-
+const app = new Hono<{ Bindings: CloudflareBindings }>();
+app.get("/", (c) => {
+  return c.text("Hello Hono!");
+});
 
 interface CloudflareBindings {
+  DEEPGRAM_KEY: string;
   OPENAI_API_KEY: string;
 }
-
 
 // // Health check endpoint
 app.get("/health", (c) => {
@@ -38,13 +37,19 @@ app.post("/api/audio/speech", async (c) => {
     voice,
     ...otherParams,
   });
-  return response
-
+  return response;
 });
 
-
-
-
+// text generation
+app.post("/api/text/completions", async (c) => {
+  const openai = new OpenAI({
+    apiKey: c.env.OPENAI_API_KEY,
+  });
+  const response = await openai.responses.create({
+    model: "gpt-5-nano",
+    input: "Write a one-sentence bedtime story about a unicorn.",
+  });
+  return response.output_text;
+});
 
 export default app;
-

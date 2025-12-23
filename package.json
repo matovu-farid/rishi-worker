@@ -7,8 +7,11 @@
     "cf-typegen": "wrangler types --env-interface CloudflareBindings"
   },
   "dependencies": {
+    "@clerk/backend": "^2.29.0",
+    "axios": "^1.13.2",
     "hono": "^4.10.6",
-    "openai": "^6.9.0"
+    "openai": "^6.9.0",
+    "zod": "^4.1.13"
   },
   "devDependencies": {
     "wrangler": "^4.4.0"

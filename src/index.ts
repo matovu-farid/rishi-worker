@@ -4,6 +4,7 @@ import { Hono } from "hono";
 import { OpenAI } from "openai";
 import { z } from "zod";
 import { createClerkClient } from "@clerk/backend";
+import * as Sentry from "@sentry/cloudflare";
 
 const app = new Hono<{ Bindings: CloudflareBindings }>();
 app.get("/", (c) => {
@@ -128,4 +129,15 @@ app.post("/api/text/completions", async (c) => {
   return c.json(response.output_text);
 });
 
-export default app;
+export default Sentry.withSentry((env: Env) => {
+  const { id: versionId } = env.CF_VERSION_METADATA;
+  return {
+    dsn: "https://94fe4a61653475c40e733e93a9479596@o4510586781958144.ingest.de.sentry.io/4510588453584976",
+    release: versionId,
+    // Adds request headers and IP for users, for more info visit:
+    // https://docs.sentry.io/platforms/javascript/guides/cloudflare/configuration/options/#sendDefaultPii
+    sendDefaultPii: true,
+  };
+}, app);
+
+// export default app;

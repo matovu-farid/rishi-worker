@@ -137,6 +137,7 @@ export default Sentry.withSentry((env: Env) => {
     // Adds request headers and IP for users, for more info visit:
     // https://docs.sentry.io/platforms/javascript/guides/cloudflare/configuration/options/#sendDefaultPii
     sendDefaultPii: true,
+    enableLogs: true,
   };
 }, app);
 

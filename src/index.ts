@@ -32,12 +32,21 @@ app.get("/api/clerk/users", async (c) => {
 });
 
 app.get("/api/clerk/user/:userId", async (c) => {
-  const clerkClient = createClerkClient({ secretKey: c.env.CLERK_SECRET_KEY });
-  const userId = c.req.param("userId");
+  try {
+    const clerkClient = createClerkClient({
+      secretKey: c.env.CLERK_SECRET_KEY,
+    });
+    const userId = c.req.param("userId");
 
-  const user = await clerkClient.users.getUser(userId);
+    const user = await clerkClient.users.getUser(userId);
 
-  return c.json(user);
+    return c.json(user);
+  } catch (error) {
+    if (error instanceof Error) {
+      return c.json({ error: "Failed to get user, " + error.message }, 500);
+    }
+    return c.json({ error: "Failed to get user, " }, 500);
+  }
 });
 
 // Proxy all requests to /api/openai/* to OpenAI API
